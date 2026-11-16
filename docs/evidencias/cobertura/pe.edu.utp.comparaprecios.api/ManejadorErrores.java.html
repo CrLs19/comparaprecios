@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ManejadorErrores.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.api</a> &gt; <span class="el_source">ManejadorErrores.java</span></div><h1>ManejadorErrores.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.api;
+
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import pe.edu.utp.comparaprecios.integracion.ServicioExternoException;
+
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/** Convierte las excepciones en respuestas JSON con un mensaje claro para el usuario. */
+@RestControllerAdvice
+<span class="fc" id="L19">public class ManejadorErrores {</span>
+
+    @ExceptionHandler(ServicioExternoException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; servicioExterno(ServicioExternoException e) {
+<span class="fc" id="L23">        return respuesta(HttpStatus.SERVICE_UNAVAILABLE, e.getFuente(),</span>
+<span class="fc" id="L24">                &quot;El servicio de &quot; + e.getFuente() + &quot; no esta disponible en este momento: &quot; + e.getMessage());</span>
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class,
+            MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class,
+            HandlerMethodValidationException.class})
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; peticionInvalida(Exception e) {
+<span class="fc" id="L31">        return respuesta(HttpStatus.BAD_REQUEST, &quot;API&quot;, e.getMessage());</span>
+    }
+
+    private ResponseEntity&lt;Map&lt;String, Object&gt;&gt; respuesta(HttpStatus estado, String fuente, String mensaje) {
+<span class="fc" id="L35">        Map&lt;String, Object&gt; cuerpo = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L36">        cuerpo.put(&quot;fecha&quot;, LocalDateTime.now());</span>
+<span class="fc" id="L37">        cuerpo.put(&quot;estado&quot;, estado.value());</span>
+<span class="fc" id="L38">        cuerpo.put(&quot;fuente&quot;, fuente);</span>
+<span class="fc" id="L39">        cuerpo.put(&quot;mensaje&quot;, mensaje);</span>
+<span class="fc" id="L40">        return ResponseEntity.status(estado).body(cuerpo);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

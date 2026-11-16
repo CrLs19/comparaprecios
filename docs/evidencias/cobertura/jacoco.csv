@@ -1,0 +1,23 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.integracion.oece,OeceAdapter,11,372,6,18,1,70,6,14,0,8
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.integracion.oece,ResumenProceso,0,9,0,0,0,1,0,1,0,1
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.persistencia,ConsultaRealizada,3,104,0,0,1,30,1,27,1,27
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.persistencia,ResultadoClasificacion,18,22,0,0,6,9,6,3,6,3
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.negocio,CalculadoraAjuste,14,149,1,3,0,25,4,7,3,6
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.negocio,TrazabilidadService,0,99,0,2,0,22,0,4,0,3
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.negocio,OrquestadorConsulta,37,459,7,31,5,94,9,30,2,18
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.negocio,ExtractorModelo,17,86,4,10,2,21,4,8,0,5
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.negocio,ClasificadorComparabilidad,0,260,3,43,0,53,3,27,0,7
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.integracion.bcrp,BcrpAdapter,13,324,6,22,4,45,6,14,0,6
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.api.dto,RespuestaConsulta,0,54,0,0,0,1,0,1,0,1
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.config,HttpConfig,0,43,0,0,0,11,0,4,0,4
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.dominio,SeriesEconomicas,6,54,0,0,2,12,2,6,2,6
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.dominio,EstadoComparabilidad,1,29,1,1,0,5,1,2,0,2
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.dominio,ItemContratado,27,39,0,0,8,14,7,7,7,7
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.dominio,AjusteTemporal,0,36,0,0,0,1,0,1,0,1
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.dominio,Antecedente,4,171,0,2,1,46,1,42,1,41
+ComparaPrecios Peru,pe.edu.utp.comparaprecios,ComparaPreciosApplication,5,3,0,0,2,1,1,1,1,1
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.integracion,ServicioExternoException,0,11,0,0,0,4,0,2,0,2
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.integracion,ClienteHttp,3,107,0,2,2,23,0,5,0,4
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.api,ManejadorErrores,0,52,0,0,0,10,0,4,0,4
+ComparaPrecios Peru,pe.edu.utp.comparaprecios.api,AntecedenteController,0,57,0,8,0,12,0,9,0,5

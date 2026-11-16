@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CalculadoraAjuste.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.negocio</a> &gt; <span class="el_source">CalculadoraAjuste.java</span></div><h1>CalculadoraAjuste.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.negocio;
+
+import org.springframework.stereotype.Component;
+import pe.edu.utp.comparaprecios.dominio.AjusteTemporal;
+import pe.edu.utp.comparaprecios.dominio.SeriesEconomicas;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.time.YearMonth;
+
+/**
+ * Expresa un precio historico en moneda de otro periodo con dos criterios:
+ *   IPC:  monto x IPC(destino) / IPC(origen)
+ *   TC:   monto x TC(destino)  / TC(origen)
+ * El resultado es un rango; la diferencia porcentual se calcula sobre el minimo.
+ */
+@Component
+<span class="fc" id="L19">public class CalculadoraAjuste {</span>
+
+<span class="fc" id="L21">    private static final MathContext MC = new MathContext(12, RoundingMode.HALF_UP);</span>
+
+    public AjusteTemporal ajustar(BigDecimal monto, YearMonth origen, YearMonth destino, SeriesEconomicas series) {
+<span class="pc" id="L24">        BigDecimal ipcOrigen = series.ipc(origen).orElseThrow(() -&gt; sinDato(&quot;IPC&quot;, origen));</span>
+<span class="fc" id="L25">        BigDecimal ipcDestino = series.ipc(destino).orElseThrow(() -&gt; sinDato(&quot;IPC&quot;, destino));</span>
+<span class="pc" id="L26">        BigDecimal tcOrigen = series.tipoCambio(origen).orElseThrow(() -&gt; sinDato(&quot;tipo de cambio&quot;, origen));</span>
+<span class="pc" id="L27">        BigDecimal tcDestino = series.tipoCambio(destino).orElseThrow(() -&gt; sinDato(&quot;tipo de cambio&quot;, destino));</span>
+
+<span class="fc" id="L29">        validarIndice(&quot;IPC&quot;, origen, ipcOrigen);</span>
+<span class="fc" id="L30">        validarIndice(&quot;IPC&quot;, destino, ipcDestino);</span>
+<span class="fc" id="L31">        validarIndice(&quot;tipo de cambio&quot;, origen, tcOrigen);</span>
+<span class="fc" id="L32">        validarIndice(&quot;tipo de cambio&quot;, destino, tcDestino);</span>
+
+<span class="fc" id="L34">        BigDecimal factorIpc = ipcDestino.divide(ipcOrigen, MC);</span>
+<span class="fc" id="L35">        BigDecimal factorTc = tcDestino.divide(tcOrigen, MC);</span>
+
+<span class="fc" id="L37">        BigDecimal segunIpc = monto.multiply(factorIpc).setScale(2, RoundingMode.HALF_UP);</span>
+<span class="fc" id="L38">        BigDecimal segunTc = monto.multiply(factorTc).setScale(2, RoundingMode.HALF_UP);</span>
+<span class="fc" id="L39">        BigDecimal minimo = segunIpc.min(segunTc);</span>
+<span class="fc" id="L40">        BigDecimal maximo = segunIpc.max(segunTc);</span>
+<span class="fc" id="L41">        BigDecimal diferencia = maximo.subtract(minimo);</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        BigDecimal porcentaje = minimo.signum() == 0 ? BigDecimal.ZERO</span>
+<span class="fc" id="L43">                : diferencia.multiply(BigDecimal.valueOf(100)).divide(minimo, 1, RoundingMode.HALF_UP);</span>
+
+<span class="fc" id="L45">        return new AjusteTemporal(monto, origen, destino,</span>
+<span class="fc" id="L46">                factorIpc.setScale(6, RoundingMode.HALF_UP), factorTc.setScale(6, RoundingMode.HALF_UP),</span>
+                segunIpc, segunTc, minimo, maximo, diferencia, porcentaje);
+    }
+
+    private static IllegalArgumentException sinDato(String serie, YearMonth periodo) {
+<span class="fc" id="L51">        return new IllegalArgumentException(&quot;El BCRP no publica &quot; + serie + &quot; para &quot; + periodo);</span>
+    }
+
+    private static void validarIndice(String serie, YearMonth periodo, BigDecimal valor) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (valor.signum() &lt;= 0) {</span>
+<span class="fc" id="L56">            throw new IllegalArgumentException(&quot;El valor de &quot; + serie + &quot; para &quot; + periodo + &quot; debe ser positivo&quot;);</span>
+        }
+<span class="fc" id="L58">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

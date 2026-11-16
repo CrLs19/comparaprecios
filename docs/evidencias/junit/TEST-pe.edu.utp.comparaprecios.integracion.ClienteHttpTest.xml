@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="4.102" tests="5" errors="0" skipped="0" failures="0">
+  <testcase name="noReintentaUnError400" classname="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="0.546" />
+  <testcase name="dosReintentosPermitenTresIntentosEnTotal" classname="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="3.012">
+    <system-out>16:36:04.426 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 1 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+16:36:04.930 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 2 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+16:36:05.932 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 3 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+</system-out>
+  </testcase>
+  <testcase name="noAceptaHtmlComoRespuestaJson" classname="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="0.013" />
+  <testcase name="recuperaElResultadoDespuesDeUnError500" classname="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="0.508">
+    <system-out>16:36:07.451 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 1 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+</system-out>
+  </testcase>
+  <testcase name="devuelveUnJsonValido" classname="pe.edu.utp.comparaprecios.integracion.ClienteHttpTest" time="0.003" />
+</testsuite>

@@ -1,0 +1,144 @@
+{
+  "info": {
+    "name": "ComparaPrecios - validacion manual",
+    "description": "Ejecutar con la aplicación encendida. Las consultas a OECE y BCRP requieren acceso real; no confundirlas con las pruebas simuladas de Maven.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "ocid",
+      "value": "ocds-dgv273-seacev3-1034013"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Historial",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/consultas"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Contrato de respuesta\", () => { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Validacion de parametros",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/antecedentes?termino=ab"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Contrato de respuesta\", () => { pm.expect(pm.response.json().fuente).to.eql(\"API\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Ajuste con BCRP",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/ajustes?monto=551.89&origen=2024-07&destino=2026-06"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Contrato de respuesta\", () => { const r=pm.response.json(); pm.expect(r.montoSegunIpc).to.be.a(\"number\"); pm.expect(r.montoSegunTipoCambio).to.be.a(\"number\"); pm.expect(r.periodoDestino).to.eql(\"2026-06\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Detalle OECE",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/antecedentes/{{ocid}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Contrato de respuesta\", () => { const r=pm.response.json(); pm.expect(r.ocid).to.eql(pm.variables.get(\"ocid\")); pm.expect([\"UTILIZABLE\",\"REVISION\",\"DESCARTADO\"]).to.include(r.estado); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Busqueda completa",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/antecedentes?termino=TONER&modelo=TK-3432&desde=2024&hasta=2026"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Contrato de respuesta\", () => { const r=pm.response.json(); pm.expect(r.analizados).to.eql(r.antecedentes.length); pm.expect(r.utilizables+r.enRevision+r.descartados).to.eql(r.analizados); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

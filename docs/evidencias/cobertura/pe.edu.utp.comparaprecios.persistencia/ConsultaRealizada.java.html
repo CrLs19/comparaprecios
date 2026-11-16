@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsultaRealizada.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.persistencia</a> &gt; <span class="el_source">ConsultaRealizada.java</span></div><h1>ConsultaRealizada.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.persistencia;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/** Registro de cada consulta para la trazabilidad del analisis (OE6). */
+@Entity
+@Table(name = &quot;consulta_realizada&quot;)
+<span class="fc" id="L19">public class ConsultaRealizada {</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDateTime fechaConsulta;
+    private String termino;
+    private String modelo;
+    private Integer anioDesde;
+    private Integer anioHasta;
+    private int totalProcesos;
+    private int utilizables;
+    private int enRevision;
+    private int descartados;
+    private String estadoOece;
+    private String estadoBcrp;
+    private long duracionMs;
+
+<span class="fc" id="L38">    @OneToMany(mappedBy = &quot;consulta&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</span>
+    private List&lt;ResultadoClasificacion&gt; resultados = new ArrayList&lt;&gt;();
+
+    public void agregarResultado(ResultadoClasificacion r) {
+<span class="fc" id="L42">        r.setConsulta(this);</span>
+<span class="fc" id="L43">        resultados.add(r);</span>
+<span class="fc" id="L44">    }</span>
+
+<span class="fc" id="L46">    public Long getId() { return id; }</span>
+
+<span class="fc" id="L48">    public LocalDateTime getFechaConsulta() { return fechaConsulta; }</span>
+<span class="fc" id="L49">    public void setFechaConsulta(LocalDateTime fechaConsulta) { this.fechaConsulta = fechaConsulta; }</span>
+
+<span class="fc" id="L51">    public String getTermino() { return termino; }</span>
+<span class="fc" id="L52">    public void setTermino(String termino) { this.termino = termino; }</span>
+
+<span class="fc" id="L54">    public String getModelo() { return modelo; }</span>
+<span class="fc" id="L55">    public void setModelo(String modelo) { this.modelo = modelo; }</span>
+
+<span class="fc" id="L57">    public Integer getAnioDesde() { return anioDesde; }</span>
+<span class="fc" id="L58">    public void setAnioDesde(Integer anioDesde) { this.anioDesde = anioDesde; }</span>
+
+<span class="fc" id="L60">    public Integer getAnioHasta() { return anioHasta; }</span>
+<span class="fc" id="L61">    public void setAnioHasta(Integer anioHasta) { this.anioHasta = anioHasta; }</span>
+
+<span class="fc" id="L63">    public int getTotalProcesos() { return totalProcesos; }</span>
+<span class="fc" id="L64">    public void setTotalProcesos(int totalProcesos) { this.totalProcesos = totalProcesos; }</span>
+
+<span class="fc" id="L66">    public int getUtilizables() { return utilizables; }</span>
+<span class="fc" id="L67">    public void setUtilizables(int utilizables) { this.utilizables = utilizables; }</span>
+
+<span class="fc" id="L69">    public int getEnRevision() { return enRevision; }</span>
+<span class="fc" id="L70">    public void setEnRevision(int enRevision) { this.enRevision = enRevision; }</span>
+
+<span class="fc" id="L72">    public int getDescartados() { return descartados; }</span>
+<span class="fc" id="L73">    public void setDescartados(int descartados) { this.descartados = descartados; }</span>
+
+<span class="fc" id="L75">    public String getEstadoOece() { return estadoOece; }</span>
+<span class="fc" id="L76">    public void setEstadoOece(String estadoOece) { this.estadoOece = estadoOece; }</span>
+
+<span class="fc" id="L78">    public String getEstadoBcrp() { return estadoBcrp; }</span>
+<span class="fc" id="L79">    public void setEstadoBcrp(String estadoBcrp) { this.estadoBcrp = estadoBcrp; }</span>
+
+<span class="fc" id="L81">    public long getDuracionMs() { return duracionMs; }</span>
+<span class="fc" id="L82">    public void setDuracionMs(long duracionMs) { this.duracionMs = duracionMs; }</span>
+
+    @JsonIgnore
+<span class="nc" id="L85">    public List&lt;ResultadoClasificacion&gt; getResultados() { return resultados; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

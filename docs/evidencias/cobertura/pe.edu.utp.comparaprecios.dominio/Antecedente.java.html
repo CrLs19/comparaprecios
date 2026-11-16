@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Antecedente.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.dominio</a> &gt; <span class="el_source">Antecedente.java</span></div><h1>Antecedente.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.dominio;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Proceso de contratacion normalizado a partir del registro OCDS de la OECE,
+ * junto con el resultado de la evaluacion de comparabilidad.
+ */
+<span class="fc" id="L12">public class Antecedente {</span>
+
+    // Datos de la fuente
+    private String ocid;
+    private String nomenclatura;
+    private String descripcionProceso;
+    private String entidad;
+    private String metodo;
+    private LocalDate fechaPublicacion;
+    private LocalDate fechaAdjudicacion;
+    private BigDecimal valorEstimado;
+    private BigDecimal montoAdjudicado;
+    private String proveedor;
+    private int numeroAdjudicaciones;
+    private int numeroDocumentos;
+    private String urlFuente;
+<span class="fc" id="L28">    private List&lt;ItemContratado&gt; items = new ArrayList&lt;&gt;();</span>
+
+    // Resultado del analisis
+    private EstadoComparabilidad estado;
+<span class="fc" id="L32">    private List&lt;String&gt; motivos = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L33">    private List&lt;String&gt; modelos = new ArrayList&lt;&gt;();</span>
+    private BigDecimal cantidad;
+    private BigDecimal precioUnitario;
+    private AjusteTemporal ajuste;
+
+    public void agregarMotivo(EstadoComparabilidad nuevoEstado, String motivo) {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        this.estado = (this.estado == null) ? nuevoEstado : this.estado.peor(nuevoEstado);</span>
+<span class="fc" id="L40">        this.motivos.add(motivo);</span>
+<span class="fc" id="L41">    }</span>
+
+<span class="fc" id="L43">    public String getOcid() { return ocid; }</span>
+<span class="fc" id="L44">    public void setOcid(String ocid) { this.ocid = ocid; }</span>
+
+<span class="fc" id="L46">    public String getNomenclatura() { return nomenclatura; }</span>
+<span class="fc" id="L47">    public void setNomenclatura(String nomenclatura) { this.nomenclatura = nomenclatura; }</span>
+
+<span class="fc" id="L49">    public String getDescripcionProceso() { return descripcionProceso; }</span>
+<span class="fc" id="L50">    public void setDescripcionProceso(String descripcionProceso) { this.descripcionProceso = descripcionProceso; }</span>
+
+<span class="fc" id="L52">    public String getEntidad() { return entidad; }</span>
+<span class="fc" id="L53">    public void setEntidad(String entidad) { this.entidad = entidad; }</span>
+
+<span class="fc" id="L55">    public String getMetodo() { return metodo; }</span>
+<span class="fc" id="L56">    public void setMetodo(String metodo) { this.metodo = metodo; }</span>
+
+<span class="fc" id="L58">    public LocalDate getFechaPublicacion() { return fechaPublicacion; }</span>
+<span class="fc" id="L59">    public void setFechaPublicacion(LocalDate fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }</span>
+
+<span class="fc" id="L61">    public LocalDate getFechaAdjudicacion() { return fechaAdjudicacion; }</span>
+<span class="fc" id="L62">    public void setFechaAdjudicacion(LocalDate fechaAdjudicacion) { this.fechaAdjudicacion = fechaAdjudicacion; }</span>
+
+<span class="fc" id="L64">    public BigDecimal getValorEstimado() { return valorEstimado; }</span>
+<span class="fc" id="L65">    public void setValorEstimado(BigDecimal valorEstimado) { this.valorEstimado = valorEstimado; }</span>
+
+<span class="fc" id="L67">    public BigDecimal getMontoAdjudicado() { return montoAdjudicado; }</span>
+<span class="fc" id="L68">    public void setMontoAdjudicado(BigDecimal montoAdjudicado) { this.montoAdjudicado = montoAdjudicado; }</span>
+
+<span class="fc" id="L70">    public String getProveedor() { return proveedor; }</span>
+<span class="fc" id="L71">    public void setProveedor(String proveedor) { this.proveedor = proveedor; }</span>
+
+<span class="fc" id="L73">    public int getNumeroAdjudicaciones() { return numeroAdjudicaciones; }</span>
+<span class="fc" id="L74">    public void setNumeroAdjudicaciones(int numeroAdjudicaciones) { this.numeroAdjudicaciones = numeroAdjudicaciones; }</span>
+
+<span class="fc" id="L76">    public int getNumeroDocumentos() { return numeroDocumentos; }</span>
+<span class="fc" id="L77">    public void setNumeroDocumentos(int numeroDocumentos) { this.numeroDocumentos = numeroDocumentos; }</span>
+
+<span class="fc" id="L79">    public String getUrlFuente() { return urlFuente; }</span>
+<span class="fc" id="L80">    public void setUrlFuente(String urlFuente) { this.urlFuente = urlFuente; }</span>
+
+<span class="fc" id="L82">    public List&lt;ItemContratado&gt; getItems() { return items; }</span>
+<span class="fc" id="L83">    public void setItems(List&lt;ItemContratado&gt; items) { this.items = items; }</span>
+
+<span class="fc" id="L85">    public EstadoComparabilidad getEstado() { return estado; }</span>
+<span class="fc" id="L86">    public void setEstado(EstadoComparabilidad estado) { this.estado = estado; }</span>
+
+<span class="fc" id="L88">    public List&lt;String&gt; getMotivos() { return motivos; }</span>
+<span class="nc" id="L89">    public void setMotivos(List&lt;String&gt; motivos) { this.motivos = motivos; }</span>
+
+<span class="fc" id="L91">    public List&lt;String&gt; getModelos() { return modelos; }</span>
+<span class="fc" id="L92">    public void setModelos(List&lt;String&gt; modelos) { this.modelos = modelos; }</span>
+
+<span class="fc" id="L94">    public BigDecimal getCantidad() { return cantidad; }</span>
+<span class="fc" id="L95">    public void setCantidad(BigDecimal cantidad) { this.cantidad = cantidad; }</span>
+
+<span class="fc" id="L97">    public BigDecimal getPrecioUnitario() { return precioUnitario; }</span>
+<span class="fc" id="L98">    public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }</span>
+
+<span class="fc" id="L100">    public AjusteTemporal getAjuste() { return ajuste; }</span>
+<span class="fc" id="L101">    public void setAjuste(AjusteTemporal ajuste) { this.ajuste = ajuste; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

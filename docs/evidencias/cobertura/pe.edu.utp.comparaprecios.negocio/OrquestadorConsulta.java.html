@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrquestadorConsulta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.negocio</a> &gt; <span class="el_source">OrquestadorConsulta.java</span></div><h1>OrquestadorConsulta.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.negocio;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import pe.edu.utp.comparaprecios.api.dto.RespuestaConsulta;
+import pe.edu.utp.comparaprecios.dominio.AjusteTemporal;
+import pe.edu.utp.comparaprecios.dominio.Antecedente;
+import pe.edu.utp.comparaprecios.dominio.EstadoComparabilidad;
+import pe.edu.utp.comparaprecios.dominio.SeriesEconomicas;
+import pe.edu.utp.comparaprecios.integracion.ServicioExternoException;
+import pe.edu.utp.comparaprecios.integracion.bcrp.BcrpAdapter;
+import pe.edu.utp.comparaprecios.integracion.oece.OeceAdapter;
+import pe.edu.utp.comparaprecios.integracion.oece.ResumenProceso;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Servicio compuesto: coordina la busqueda en la OECE, la lectura del detalle,
+ * la clasificacion, el ajuste con series del BCRP y el registro de la consulta.
+ */
+@Service
+public class OrquestadorConsulta {
+
+<span class="fc" id="L36">    private static final Logger log = LoggerFactory.getLogger(OrquestadorConsulta.class);</span>
+<span class="fc" id="L37">    private static final ZoneId LIMA = ZoneId.of(&quot;America/Lima&quot;);</span>
+
+    private final OeceAdapter oece;
+    private final BcrpAdapter bcrp;
+    private final ClasificadorComparabilidad clasificador;
+    private final CalculadoraAjuste calculadora;
+    private final ExtractorModelo extractor;
+    private final TrazabilidadService trazabilidad;
+    private final ExecutorService ejecutor;
+
+    public OrquestadorConsulta(OeceAdapter oece, BcrpAdapter bcrp, ClasificadorComparabilidad clasificador,
+                               CalculadoraAjuste calculadora, ExtractorModelo extractor,
+<span class="fc" id="L49">                               TrazabilidadService trazabilidad, ExecutorService ejecutorDetalle) {</span>
+<span class="fc" id="L50">        this.oece = oece;</span>
+<span class="fc" id="L51">        this.bcrp = bcrp;</span>
+<span class="fc" id="L52">        this.clasificador = clasificador;</span>
+<span class="fc" id="L53">        this.calculadora = calculadora;</span>
+<span class="fc" id="L54">        this.extractor = extractor;</span>
+<span class="fc" id="L55">        this.trazabilidad = trazabilidad;</span>
+<span class="fc" id="L56">        this.ejecutor = ejecutorDetalle;</span>
+<span class="fc" id="L57">    }</span>
+
+    public RespuestaConsulta consultar(String termino, String modelo, Integer desde, Integer hasta) {
+<span class="fc" id="L60">        long inicio = System.currentTimeMillis();</span>
+<span class="fc" id="L61">        LocalDateTime fechaConsulta = LocalDateTime.now(LIMA);</span>
+<span class="fc" id="L62">        List&lt;String&gt; advertencias = new ArrayList&lt;&gt;();</span>
+
+        // 1. Busqueda en la OECE (sin este paso no hay resultado: si falla se propaga el error)
+<span class="fc" id="L65">        List&lt;ResumenProceso&gt; encontrados = oece.buscar(termino);</span>
+
+        // 2. Filtro por anio de publicacion
+<span class="fc" id="L68">        List&lt;ResumenProceso&gt; enRango = encontrados.stream()</span>
+<span class="fc" id="L69">                .filter(r -&gt; dentroDelRango(r.fechaPublicacion(), desde, hasta))</span>
+<span class="fc" id="L70">                .toList();</span>
+
+        // 3. Detalle de cada proceso, en paralelo
+<span class="fc" id="L73">        List&lt;CompletableFuture&lt;Antecedente&gt;&gt; tareas = enRango.stream()</span>
+<span class="fc" id="L74">                .map(r -&gt; CompletableFuture.supplyAsync(() -&gt; oece.obtenerDetalle(r.ocid()), ejecutor))</span>
+<span class="fc" id="L75">                .toList();</span>
+<span class="fc" id="L76">        List&lt;Antecedente&gt; antecedentes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L77">        int fallidos = 0;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (CompletableFuture&lt;Antecedente&gt; t : tareas) {</span>
+            try {
+<span class="fc" id="L80">                antecedentes.add(t.get(30, TimeUnit.SECONDS));</span>
+<span class="fc" id="L81">            } catch (Exception e) {</span>
+<span class="fc" id="L82">                fallidos++;</span>
+<span class="fc" id="L83">                log.warn(&quot;No se pudo leer un registro de la OECE: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L84">            }</span>
+<span class="fc" id="L85">        }</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (fallidos &gt; 0) {</span>
+<span class="fc" id="L87">            advertencias.add(fallidos + &quot; procesos no pudieron leerse desde la OECE y se excluyeron del analisis.&quot;);</span>
+        }
+
+        // 4. Clasificacion y 5. filtro por modelo
+<span class="fc" id="L91">        antecedentes.forEach(clasificador::clasificar);</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        if (modelo != null &amp;&amp; !modelo.isBlank()) {</span>
+<span class="fc" id="L93">            String buscado = extractor.normalizarCodigo(modelo);</span>
+<span class="fc" id="L94">            antecedentes = antecedentes.stream()</span>
+<span class="pc bpc" id="L95" title="1 of 4 branches missed.">                    .filter(a -&gt; a.getModelos().contains(buscado) || textoContiene(a, buscado))</span>
+<span class="fc" id="L96">                    .collect(java.util.stream.Collectors.toCollection(ArrayList::new));</span>
+        }
+
+        // 6. Ajuste temporal con el BCRP (si falla, se devuelven los precios sin ajustar)
+<span class="fc" id="L100">        String estadoBcrp = &quot;NO REQUERIDO&quot;;</span>
+<span class="fc" id="L101">        YearMonth referencia = null;</span>
+<span class="fc" id="L102">        List&lt;Antecedente&gt; utilizables = antecedentes.stream()</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                .filter(a -&gt; a.getEstado() == EstadoComparabilidad.UTILIZABLE)</span>
+<span class="fc" id="L104">                .toList();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (!utilizables.isEmpty()) {</span>
+            try {
+<span class="fc" id="L107">                YearMonth desdeMes = utilizables.stream().map(this::periodoOrigen).min(Comparator.naturalOrder()).orElseThrow();</span>
+<span class="fc" id="L108">                SeriesEconomicas series = bcrp.obtenerSeries(desdeMes, YearMonth.now(LIMA));</span>
+<span class="fc" id="L109">                referencia = series.ultimoPeriodoComun()</span>
+<span class="pc" id="L110">                        .orElseThrow(() -&gt; new ServicioExternoException(BcrpAdapter.FUENTE, &quot;sin datos publicados en el rango&quot;, null));</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                for (Antecedente a : utilizables) {</span>
+                    try {
+<span class="fc" id="L113">                        a.setAjuste(calculadora.ajustar(a.getPrecioUnitario(), periodoOrigen(a), referencia, series));</span>
+<span class="nc" id="L114">                    } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L115">                        advertencias.add(a.getOcid() + &quot;: &quot; + e.getMessage());</span>
+<span class="fc" id="L116">                    }</span>
+<span class="fc" id="L117">                }</span>
+<span class="fc" id="L118">                estadoBcrp = &quot;OK&quot;;</span>
+<span class="fc" id="L119">            } catch (ServicioExternoException e) {</span>
+<span class="fc" id="L120">                estadoBcrp = &quot;NO DISPONIBLE&quot;;</span>
+<span class="fc" id="L121">                advertencias.add(&quot;No se pudo consultar el BCRP (&quot; + e.getMessage() + &quot;). Los precios se muestran sin actualizar.&quot;);</span>
+<span class="fc" id="L122">            }</span>
+        }
+
+<span class="fc" id="L125">        antecedentes.sort(Comparator.comparing(Antecedente::getEstado)</span>
+<span class="fc" id="L126">                .thenComparing(Antecedente::getFechaPublicacion,</span>
+<span class="fc" id="L127">                        Comparator.nullsLast(Comparator.&lt;LocalDate&gt;reverseOrder())));</span>
+
+<span class="fc" id="L129">        RespuestaConsulta parcial = new RespuestaConsulta(null, fechaConsulta, termino, modelo, desde, hasta,</span>
+<span class="fc" id="L130">                encontrados.size(), antecedentes.size(),</span>
+<span class="fc" id="L131">                contar(antecedentes, EstadoComparabilidad.UTILIZABLE),</span>
+<span class="fc" id="L132">                contar(antecedentes, EstadoComparabilidad.REVISION),</span>
+<span class="fc" id="L133">                contar(antecedentes, EstadoComparabilidad.DESCARTADO),</span>
+<span class="fc" id="L134">                referencia, &quot;OK&quot;, estadoBcrp, advertencias, System.currentTimeMillis() - inicio, antecedentes);</span>
+
+        // 7. Registro para trazabilidad
+<span class="fc" id="L137">        Long id = trazabilidad.registrar(parcial);</span>
+<span class="fc" id="L138">        return new RespuestaConsulta(id, parcial.fechaConsulta(), termino, modelo, desde, hasta,</span>
+<span class="fc" id="L139">                parcial.encontradosEnOece(), parcial.analizados(), parcial.utilizables(), parcial.enRevision(),</span>
+<span class="fc" id="L140">                parcial.descartados(), referencia, parcial.estadoOece(), estadoBcrp, advertencias,</span>
+<span class="fc" id="L141">                parcial.duracionMs(), antecedentes);</span>
+    }
+
+    /** Detalle de un solo proceso, clasificado y con ajuste al ultimo mes disponible. */
+    public Antecedente consultarProceso(String ocid) {
+<span class="fc" id="L146">        Antecedente a = clasificador.clasificar(oece.obtenerDetalle(ocid));</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if (a.getEstado() == EstadoComparabilidad.UTILIZABLE) {</span>
+            try {
+<span class="fc" id="L149">                SeriesEconomicas series = bcrp.obtenerSeries(periodoOrigen(a), YearMonth.now(LIMA));</span>
+<span class="fc" id="L150">                series.ultimoPeriodoComun().ifPresent(ref -&gt;</span>
+<span class="fc" id="L151">                        a.setAjuste(calculadora.ajustar(a.getPrecioUnitario(), periodoOrigen(a), ref, series)));</span>
+<span class="nc" id="L152">            } catch (ServicioExternoException e) {</span>
+<span class="nc" id="L153">                log.warn(&quot;Proceso {} sin ajuste: {}&quot;, ocid, e.getMessage());</span>
+<span class="fc" id="L154">            }</span>
+        }
+<span class="fc" id="L156">        return a;</span>
+    }
+
+    /** Ajuste de un monto cualquiera entre dos meses. */
+    public AjusteTemporal ajustar(BigDecimal monto, YearMonth origen, YearMonth destino) {
+<span class="fc" id="L161">        YearMonth fin = Optional.ofNullable(destino).orElse(YearMonth.now(LIMA));</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (fin.isBefore(origen)) {</span>
+<span class="fc" id="L163">            throw new IllegalArgumentException(&quot;El periodo de destino no puede ser anterior al de origen&quot;);</span>
+        }
+<span class="fc" id="L165">        SeriesEconomicas series = bcrp.obtenerSeries(origen, fin);</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        YearMonth ref = destino != null ? destino</span>
+<span class="pc" id="L167">                : series.ultimoPeriodoComun().orElseThrow(() -&gt; new IllegalArgumentException(&quot;Sin datos del BCRP&quot;));</span>
+<span class="fc" id="L168">        return calculadora.ajustar(monto, origen, ref, series);</span>
+    }
+
+    private YearMonth periodoOrigen(Antecedente a) {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        LocalDate f = a.getFechaAdjudicacion() != null ? a.getFechaAdjudicacion() : a.getFechaPublicacion();</span>
+<span class="fc" id="L173">        return YearMonth.from(f);</span>
+    }
+
+    private static boolean dentroDelRango(LocalDate fecha, Integer desde, Integer hasta) {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (fecha == null) {</span>
+<span class="nc" id="L178">            return false;</span>
+        }
+<span class="fc" id="L180">        int anio = fecha.getYear();</span>
+<span class="pc bpc" id="L181" title="1 of 8 branches missed.">        return (desde == null || anio &gt;= desde) &amp;&amp; (hasta == null || anio &lt;= hasta);</span>
+    }
+
+    private static boolean textoContiene(Antecedente a, String codigo) {
+<span class="fc" id="L185">        return a.getItems().stream()</span>
+<span class="fc" id="L186">                .map(i -&gt; ExtractorModelo.normalizarTexto(String.valueOf(i.getDescripcion())).replaceAll(&quot;[\\s-]&quot;, &quot;&quot;))</span>
+<span class="fc" id="L187">                .anyMatch(t -&gt; t.contains(codigo));</span>
+    }
+
+    private static long contar(List&lt;Antecedente&gt; lista, EstadoComparabilidad estado) {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        return lista.stream().filter(a -&gt; a.getEstado() == estado).count();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

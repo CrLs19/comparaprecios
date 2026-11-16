@@ -1,0 +1,15 @@
+{
+  "tipo" : "Prueba automatizada con HTTP externo simulado y H2 en memoria",
+  "fechaEjecucion" : "2026-11-16T16:36:24.137076019-05:00",
+  "peticion" : "/api/v1/antecedentes",
+  "parametros" : {
+    "termino" : "TONER"
+  },
+  "http" : 503,
+  "respuesta" : {
+    "fecha" : "2026-11-16T16:36:24.130141459",
+    "estado" : 503,
+    "fuente" : "OECE",
+    "mensaje" : "El servicio de OECE no esta disponible en este momento: Servicio no disponible tras 1 intentos"
+  }
+}

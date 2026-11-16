@@ -1,0 +1,19 @@
+body {
+    font-size: 0.92rem;
+}
+
+.motivo {
+    max-width: 320px;
+    font-size: 0.8rem;
+    white-space: normal;
+}
+
+.entidad {
+    max-width: 260px;
+    white-space: normal;
+}
+
+td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}

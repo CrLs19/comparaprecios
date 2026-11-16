@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.004" tests="6" errors="0" skipped="0" failures="0">
+  <testcase name="unaDescripcionAusenteNoInventaUnCodigo" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.0" />
+  <testcase name="conservaModelosDistintosParaPermitirElDescarte" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.001" />
+  <testcase name="noDuplicaElMismoModeloRepetidoEnLaDescripcion" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.0" />
+  <testcase name="reconoceElMismoModeloConDistintaEscritura(String)[1]" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.001" />
+  <testcase name="reconoceElMismoModeloConDistintaEscritura(String)[2]" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.0" />
+  <testcase name="reconoceElMismoModeloConDistintaEscritura(String)[3]" classname="pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest" time="0.0" />
+</testsuite>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AntecedenteController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.api</a> &gt; <span class="el_source">AntecedenteController.java</span></div><h1>AntecedenteController.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.api;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import pe.edu.utp.comparaprecios.api.dto.RespuestaConsulta;
+import pe.edu.utp.comparaprecios.dominio.AjusteTemporal;
+import pe.edu.utp.comparaprecios.dominio.Antecedente;
+import pe.edu.utp.comparaprecios.negocio.OrquestadorConsulta;
+import pe.edu.utp.comparaprecios.negocio.TrazabilidadService;
+import pe.edu.utp.comparaprecios.persistencia.ConsultaRealizada;
+
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.List;
+
+/** API propia que consume el dashboard. */
+@Validated
+@RestController
+@RequestMapping(&quot;/api/v1&quot;)
+public class AntecedenteController {
+
+    private final OrquestadorConsulta orquestador;
+    private final TrazabilidadService trazabilidad;
+
+<span class="fc" id="L35">    public AntecedenteController(OrquestadorConsulta orquestador, TrazabilidadService trazabilidad) {</span>
+<span class="fc" id="L36">        this.orquestador = orquestador;</span>
+<span class="fc" id="L37">        this.trazabilidad = trazabilidad;</span>
+<span class="fc" id="L38">    }</span>
+
+    /** GET /api/v1/antecedentes?termino=TONER&amp;modelo=TK-3432&amp;desde=2024&amp;hasta=2026 */
+    @GetMapping(&quot;/antecedentes&quot;)
+    public RespuestaConsulta buscar(
+            @RequestParam @NotBlank @Size(min = 3, max = 60) String termino,
+            @RequestParam(required = false) @Size(max = 30) String modelo,
+            @RequestParam(required = false) @Min(2010) @Max(2100) Integer desde,
+            @RequestParam(required = false) @Min(2010) @Max(2100) Integer hasta) {
+<span class="fc bfc" id="L47" title="All 6 branches covered.">        if (desde != null &amp;&amp; hasta != null &amp;&amp; desde &gt; hasta) {</span>
+<span class="fc" id="L48">            throw new IllegalArgumentException(&quot;El anio 'desde' no puede ser mayor que 'hasta'&quot;);</span>
+        }
+<span class="fc" id="L50">        return orquestador.consultar(termino.trim(), modelo, desde, hasta);</span>
+    }
+
+    /** GET /api/v1/antecedentes/{ocid} */
+    @GetMapping(&quot;/antecedentes/{ocid}&quot;)
+    public Antecedente detalle(@PathVariable String ocid) {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (!ocid.matches(&quot;ocds-[a-z0-9]+-[A-Za-z0-9-]+&quot;)) {</span>
+<span class="fc" id="L57">            throw new IllegalArgumentException(&quot;Formato de ocid no valido&quot;);</span>
+        }
+<span class="fc" id="L59">        return orquestador.consultarProceso(ocid);</span>
+    }
+
+    /** GET /api/v1/ajustes?monto=551.89&amp;origen=2024-07&amp;destino=2026-06 */
+    @GetMapping(&quot;/ajustes&quot;)
+    public AjusteTemporal ajustar(
+            @RequestParam @DecimalMin(&quot;0.01&quot;) BigDecimal monto,
+            @RequestParam @DateTimeFormat(pattern = &quot;yyyy-MM&quot;) YearMonth origen,
+            @RequestParam(required = false) @DateTimeFormat(pattern = &quot;yyyy-MM&quot;) YearMonth destino) {
+<span class="fc" id="L68">        return orquestador.ajustar(monto, origen, destino);</span>
+    }
+
+    /** GET /api/v1/consultas - historial para trazabilidad */
+    @GetMapping(&quot;/consultas&quot;)
+    public List&lt;ConsultaRealizada&gt; historial() {
+<span class="fc" id="L74">        return trazabilidad.ultimas();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

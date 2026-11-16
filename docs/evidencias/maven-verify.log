@@ -1,0 +1,113 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< pe.edu.utp:comparaprecios >----------------------
+[INFO] Building ComparaPrecios Peru 0.1.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ comparaprecios ---
+[INFO] Deleting /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (default) @ comparaprecios ---
+[INFO] argLine set to -javaagent:/home/agent/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=/workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ comparaprecios ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ comparaprecios ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 23 source files with javac [debug parameters release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ comparaprecios ---
+[INFO] Copying 3 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ comparaprecios ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 10 source files with javac [debug parameters release 17] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ comparaprecios ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running pe.edu.utp.comparaprecios.integracion.ClienteHttpTest
+16:36:04.426 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 1 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+16:36:04.930 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 2 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+16:36:05.932 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 3 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+16:36:07.451 [main] WARN pe.edu.utp.comparaprecios.integracion.ClienteHttp -- BCRP: intento 1 fallido para https://fuente.test/datos - 500 Internal Server Error: [no body]
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.102 s -- in pe.edu.utp.comparaprecios.integracion.ClienteHttpTest
+[INFO] Running pe.edu.utp.comparaprecios.integracion.bcrp.BcrpAdapterResilienciaTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in pe.edu.utp.comparaprecios.integracion.bcrp.BcrpAdapterResilienciaTest
+[INFO] Running pe.edu.utp.comparaprecios.integracion.oece.OeceAdapterHttpTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in pe.edu.utp.comparaprecios.integracion.oece.OeceAdapterHttpTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.CalculadoraAjusteTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.020 s -- in pe.edu.utp.comparaprecios.negocio.CalculadoraAjusteTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.CalculadoraAjusteLimitesTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.053 s -- in pe.edu.utp.comparaprecios.negocio.CalculadoraAjusteLimitesTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.OeceAdapterMapeoTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in pe.edu.utp.comparaprecios.negocio.OeceAdapterMapeoTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.ClasificadorComparabilidadTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in pe.edu.utp.comparaprecios.negocio.ClasificadorComparabilidadTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.ClasificadorLimitesTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in pe.edu.utp.comparaprecios.negocio.ClasificadorLimitesTest
+[INFO] Running pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in pe.edu.utp.comparaprecios.negocio.ExtractorModeloTest
+[INFO] Running pe.edu.utp.comparaprecios.IntegracionApiTest
+16:36:08.155 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [pe.edu.utp.comparaprecios.IntegracionApiTest]: IntegracionApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:36:08.242 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration pe.edu.utp.comparaprecios.ComparaPreciosApplication for test class pe.edu.utp.comparaprecios.IntegracionApiTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2026-11-16T16:36:08.552-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : Starting IntegracionApiTest using Java 17.0.13 with PID 57 (started by agent in /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios)
+2026-11-16T16:36:08.554-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : No active profile set, falling back to 1 default profile: "default"
+2026-11-16T16:36:09.108-05:00  INFO 57 --- [comparaprecios] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-16T16:36:09.156-05:00  INFO 57 --- [comparaprecios] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 1 JPA repository interface.
+2026-11-16T16:36:09.571-05:00  INFO 57 --- [comparaprecios] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-16T16:36:09.633-05:00  INFO 57 --- [comparaprecios] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-11-16T16:36:09.696-05:00  INFO 57 --- [comparaprecios] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-16T16:36:09.935-05:00  INFO 57 --- [comparaprecios] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-16T16:36:09.967-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-16T16:36:10.218-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:pruebas user=SA
+2026-11-16T16:36:10.220-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-16T16:36:11.117-05:00  INFO 57 --- [comparaprecios] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-16T16:36:11.159-05:00  INFO 57 --- [comparaprecios] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-16T16:36:11.595-05:00  INFO 57 --- [comparaprecios] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-11-16T16:36:11.768-05:00  INFO 57 --- [comparaprecios] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-16T16:36:11.768-05:00  INFO 57 --- [comparaprecios] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-16T16:36:11.769-05:00  INFO 57 --- [comparaprecios] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-11-16T16:36:11.780-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : Started IntegracionApiTest in 3.44 seconds (process running for 8.57)
+2026-11-16T16:36:22.852-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.integracion.ClienteHttp          : BCRP: intento 1 fallido para https://bcrp.test/api/PN38705PM-PN01207PM/json/2024-7/2026-11/esp - 500 Internal Server Error: [no body]
+2026-11-16T16:36:23.541-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.negocio.OrquestadorConsulta      : No se pudo leer un registro de la OECE: pe.edu.utp.comparaprecios.integracion.ServicioExternoException: Peticion rechazada (404 NOT_FOUND)
+2026-11-16T16:36:23.627-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.integracion.ClienteHttp          : OECE: intento 1 fallido para https://oece.test/api/v1/search?search=TONER&source=seace_v3&format=json&page=1 - 500 Internal Server Error: [no body]
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.14 s -- in pe.edu.utp.comparaprecios.IntegracionApiTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 57, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ comparaprecios ---
+[INFO] Building jar: /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target/comparaprecios-0.1.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.3.5:repackage (repackage) @ comparaprecios ---
+[INFO] Replacing main artifact /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target/comparaprecios-0.1.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target/comparaprecios-0.1.0.jar.original
+[INFO] 
+[INFO] --- jacoco:0.8.12:report (reporte-cobertura) @ comparaprecios ---
+[INFO] Loading execution data file /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios/target/jacoco.exec
+[INFO] Analyzed bundle 'ComparaPrecios Peru' with 22 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  36.108 s
+[INFO] Finished at: 2026-11-16T16:36:31-05:00
+[INFO] ------------------------------------------------------------------------

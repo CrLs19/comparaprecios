@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClasificadorComparabilidad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.negocio</a> &gt; <span class="el_source">ClasificadorComparabilidad.java</span></div><h1>ClasificadorComparabilidad.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.negocio;
+
+import org.springframework.stereotype.Component;
+import pe.edu.utp.comparaprecios.dominio.Antecedente;
+import pe.edu.utp.comparaprecios.dominio.EstadoComparabilidad;
+import pe.edu.utp.comparaprecios.dominio.ItemContratado;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static pe.edu.utp.comparaprecios.dominio.EstadoComparabilidad.DESCARTADO;
+import static pe.edu.utp.comparaprecios.dominio.EstadoComparabilidad.REVISION;
+import static pe.edu.utp.comparaprecios.dominio.EstadoComparabilidad.UTILIZABLE;
+
+/**
+ * Aplica las reglas de comparabilidad definidas a partir del analisis exploratorio.
+ *
+ * Descarte:  D1 sin adjudicacion valida, D2 paquete mixto, D3 varios modelos en un item.
+ * Revision:  R1 varios items, R2 cantidad menor o igual a 1, R3 sin codigo de modelo,
+ *            R4 adjudicado mayor que el valor estimado, R5 mas de una adjudicacion.
+ * Si ninguna regla se activa el antecedente es UTILIZABLE y se calcula el precio unitario.
+ */
+@Component
+public class ClasificadorComparabilidad {
+
+<span class="fc" id="L30">    private static final Set&lt;String&gt; ESTADOS_SIN_ADJUDICACION =</span>
+<span class="fc" id="L31">            Set.of(&quot;DESIERTO&quot;, &quot;CANCELADO&quot;, &quot;CONVOCADO&quot;, &quot;NULO&quot;, &quot;NO SUSCRITO&quot;);</span>
+
+<span class="fc" id="L33">    private static final Pattern BIENES_MEZCLADOS = Pattern.compile(</span>
+            &quot;\\b(TINTAS?|PAPEL|UTILES|ESCRITORIO|TAMBOR(ES)?|KIT DE MANTENIMIENTO|UNIDAD(ES)? DE IMAGEN)\\b&quot;);
+
+<span class="fc" id="L36">    private static final BigDecimal TOLERANCIA_R4 = new BigDecimal(&quot;1.01&quot;);</span>
+
+    private final ExtractorModelo extractor;
+
+<span class="fc" id="L40">    public ClasificadorComparabilidad(ExtractorModelo extractor) {</span>
+<span class="fc" id="L41">        this.extractor = extractor;</span>
+<span class="fc" id="L42">    }</span>
+
+    public Antecedente clasificar(Antecedente a) {
+<span class="fc" id="L45">        a.setEstado(null);</span>
+<span class="fc" id="L46">        a.getMotivos().clear();</span>
+<span class="fc" id="L47">        a.setPrecioUnitario(null);</span>
+
+<span class="fc" id="L49">        List&lt;ItemContratado&gt; items = a.getItems();</span>
+<span class="fc" id="L50">        Set&lt;String&gt; modelosProceso = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (ItemContratado item : items) {</span>
+<span class="fc" id="L52">            modelosProceso.addAll(extractor.extraer(item.getDescripcion()));</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">        a.setModelos(List.copyOf(modelosProceso));</span>
+
+        // D1 - sin adjudicacion valida
+<span class="pc bpc" id="L57" title="1 of 4 branches missed.">        boolean sinMonto = a.getMontoAdjudicado() == null || a.getMontoAdjudicado().signum() &lt;= 0;</span>
+<span class="fc" id="L58">        boolean itemSinAdjudicar = items.stream()</span>
+<span class="fc" id="L59">                .map(ItemContratado::getEstado)</span>
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">                .anyMatch(e -&gt; e != null &amp;&amp; ESTADOS_SIN_ADJUDICACION.contains(e.toUpperCase()));</span>
+<span class="fc bfc" id="L61" title="All 4 branches covered.">        if (sinMonto || itemSinAdjudicar) {</span>
+<span class="fc" id="L62">            a.agregarMotivo(DESCARTADO, &quot;D1: proceso sin adjudicacion valida (desierto, cancelado o sin monto adjudicado)&quot;);</span>
+        }
+
+        // D2 - el proceso agrupa toner con otros bienes
+<span class="fc" id="L66">        String textoCompleto = ExtractorModelo.normalizarTexto(</span>
+<span class="fc" id="L67">                nvl(a.getDescripcionProceso()) + &quot; &quot; + items.stream()</span>
+<span class="fc" id="L68">                        .map(i -&gt; nvl(i.getDescripcion()))</span>
+<span class="fc" id="L69">                        .reduce(&quot;&quot;, (x, y) -&gt; x + &quot; &quot; + y));</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (BIENES_MEZCLADOS.matcher(textoCompleto).find()) {</span>
+<span class="fc" id="L71">            a.agregarMotivo(DESCARTADO, &quot;D2: el proceso agrupa toner con otros bienes (tintas, utiles, tambores u otros)&quot;);</span>
+        }
+
+        // D3 - un mismo item reune varios modelos
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (ItemContratado item : items) {</span>
+<span class="fc" id="L76">            List&lt;String&gt; modelosItem = extractor.extraer(item.getDescripcion());</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            if (modelosItem.size() &gt;= 2) {</span>
+<span class="fc" id="L78">                a.agregarMotivo(DESCARTADO, &quot;D3: un solo item reune varios modelos &quot; + modelosItem);</span>
+<span class="fc" id="L79">                break;</span>
+            }
+<span class="fc" id="L81">        }</span>
+
+        // R1 - varios items: el monto adjudicado no esta desagregado por item
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (items.size() &gt; 1) {</span>
+<span class="fc" id="L85">            a.agregarMotivo(REVISION, &quot;R1: el proceso tiene &quot; + items.size()</span>
+                    + &quot; items y el monto adjudicado no se publica por item&quot;);
+        }
+
+        // R2 - cantidad declarada igual a 1 (posible lote)
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        BigDecimal cantidad = items.size() == 1 ? items.get(0).getCantidad() : null;</span>
+<span class="fc bfc" id="L91" title="All 6 branches covered.">        if (items.size() == 1 &amp;&amp; (cantidad == null || cantidad.compareTo(BigDecimal.ONE) &lt;= 0)) {</span>
+<span class="fc" id="L92">            a.agregarMotivo(REVISION, &quot;R2: cantidad ausente, no positiva o igual a 1 (posible lote); requiere revision&quot;);</span>
+        }
+
+        // R3 - no se identifica el codigo del consumible
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (modelosProceso.isEmpty()) {</span>
+<span class="fc" id="L97">            a.agregarMotivo(REVISION, &quot;R3: la descripcion no identifica el codigo del consumible; revisar bases o pliego absolutorio&quot;);</span>
+        }
+
+        // R4 - adjudicado mayor que el valor estimado (se tolera 1 % por redondeos)
+<span class="pc bpc" id="L101" title="1 of 6 branches missed.">        if (!sinMonto &amp;&amp; a.getValorEstimado() != null &amp;&amp; a.getValorEstimado().signum() &gt; 0</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                &amp;&amp; a.getMontoAdjudicado().compareTo(a.getValorEstimado().multiply(TOLERANCIA_R4)) &gt; 0) {</span>
+<span class="fc" id="L103">            a.agregarMotivo(REVISION, &quot;R4: el monto adjudicado supera el valor estimado de la convocatoria&quot;);</span>
+        }
+
+        // R5 - mas de una adjudicacion registrada
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (a.getNumeroAdjudicaciones() &gt; 1) {</span>
+<span class="fc" id="L108">            a.agregarMotivo(REVISION, &quot;R5: el registro contiene &quot; + a.getNumeroAdjudicaciones() + &quot; adjudicaciones&quot;);</span>
+        }
+
+<span class="fc" id="L111">        a.setCantidad(cantidad);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (a.getEstado() == null) {</span>
+<span class="fc" id="L113">            a.setEstado(UTILIZABLE);</span>
+<span class="fc" id="L114">            a.getMotivos().add(&quot;Un solo item homogeneo, con modelo identificado y adjudicacion registrada&quot;);</span>
+<span class="fc" id="L115">            a.setPrecioUnitario(a.getMontoAdjudicado().divide(cantidad, 2, RoundingMode.HALF_UP));</span>
+        }
+<span class="fc" id="L117">        return a;</span>
+    }
+
+    private static String nvl(String s) {
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        return s == null ? &quot;&quot; : s;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

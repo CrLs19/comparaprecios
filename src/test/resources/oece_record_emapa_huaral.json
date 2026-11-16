@@ -1,0 +1,69 @@
+{
+ "records": [
+  {
+   "compiledRelease": {
+    "ocid": "ocds-dgv273-seacev3-2024-2353-29",
+    "buyer": {
+     "id": "PE-CONSUCODE-2353",
+     "name": "EMPRESA MUNICIPAL DE AGUA POTABLE Y ALCANTARILLADO DE HUARAL S.A."
+    },
+    "tender": {
+     "id": "1048912",
+     "title": "AS-SM-13-2024-EMAPA HUARAL SA-1",
+     "description": "ADQUISICION DE TONER PARA IMPRESORAS DE LAS DIFERENTES OFICINAS DE LA EPS EMAPA HUARAL S.A.",
+     "datePublished": "2024-09-10T10:15:00-05:00",
+     "procurementMethodDetails": "Adjudicación Simplificada",
+     "value": {
+      "amount": 53492,
+      "currency": "PEN"
+     },
+     "items": [
+      {
+       "id": "20801792",
+       "description": "De acuerdo a la siguiente distribucion:\n24 uni codigo 213-A\n30 uni codigo TK-3432\n40 uni codigo TK 3182\n06 uni codigo TK 1175",
+       "statusDetails": "CONTRATADO",
+       "classification": {
+        "id": "4410310300340938",
+        "description": "TONER COLOR NEGRO PARA IMPRESORA MULTIFUNCIONAL LASER",
+        "scheme": "CUBSO"
+       },
+       "quantity": 100,
+       "totalValue": {
+        "amount": 53492,
+        "currency": "PEN"
+       },
+       "unit": {
+        "id": "40",
+        "name": "Unidad"
+       }
+      }
+     ],
+     "documents": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+     ]
+    },
+    "awards": [
+     {
+      "id": "1048912-20602951252",
+      "date": "2024-09-26T00:00:00-05:00",
+      "value": {
+       "amount": 48114.81,
+       "currency": "PEN"
+      },
+      "suppliers": [
+       {
+        "name": "CONSULTORIA EN TECNOLOGIA INFO"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

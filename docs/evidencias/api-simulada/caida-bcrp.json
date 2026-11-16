@@ -1,0 +1,56 @@
+{
+  "tipo" : "Prueba automatizada con HTTP externo simulado y H2 en memoria",
+  "fechaEjecucion" : "2026-11-16T16:36:23.527190530-05:00",
+  "peticion" : "/api/v1/antecedentes",
+  "parametros" : {
+    "termino" : "TONER"
+  },
+  "http" : 200,
+  "respuesta" : {
+    "idConsulta" : 2,
+    "fechaConsulta" : "2026-11-16T16:36:22.849246841",
+    "termino" : "TONER",
+    "modelo" : null,
+    "anioDesde" : null,
+    "anioHasta" : null,
+    "encontradosEnOece" : 1,
+    "analizados" : 1,
+    "utilizables" : 1,
+    "enRevision" : 0,
+    "descartados" : 0,
+    "periodoReferencia" : null,
+    "estadoOece" : "OK",
+    "estadoBcrp" : "NO DISPONIBLE",
+    "advertencias" : [ "No se pudo consultar el BCRP (Servicio no disponible tras 1 intentos). Los precios se muestran sin actualizar." ],
+    "duracionMs" : 504,
+    "antecedentes" : [ {
+      "ocid" : "ocds-test-util",
+      "nomenclatura" : "Proceso sintÃ©tico",
+      "descripcionProceso" : null,
+      "entidad" : "Entidad de prueba",
+      "metodo" : null,
+      "fechaPublicacion" : "2024-07-01",
+      "fechaAdjudicacion" : "2024-07-15",
+      "valorEstimado" : 75056.5,
+      "montoAdjudicado" : 75056.5,
+      "proveedor" : "Proveedor de prueba",
+      "numeroAdjudicaciones" : 1,
+      "numeroDocumentos" : 0,
+      "urlFuente" : "https://oece.test/api/v1/record/ocds-test-util?format=json",
+      "items" : [ {
+        "descripcion" : "Toner TK3432",
+        "clasificacion" : null,
+        "cantidad" : 136,
+        "unidad" : "Unidad",
+        "valorTotal" : null,
+        "estado" : "CONTRATADO"
+      } ],
+      "estado" : "UTILIZABLE",
+      "motivos" : [ "Un solo item homogeneo, con modelo identificado y adjudicacion registrada" ],
+      "modelos" : [ "TK3432" ],
+      "cantidad" : 136,
+      "precioUnitario" : 551.89,
+      "ajuste" : null
+    } ]
+  }
+}

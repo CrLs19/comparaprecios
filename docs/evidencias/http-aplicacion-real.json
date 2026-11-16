@@ -1,0 +1,108 @@
+{
+  "entorno": "Aplicacion real en localhost con acceso externo mediante proxy del entorno; sin mocks",
+  "resultados": [
+    {
+      "caso": "historial",
+      "fecha": "2026-11-16T21:37:15.905002+00:00",
+      "url": "http://localhost:18080/api/v1/consultas",
+      "http_esperado": 200,
+      "http_obtenido": 200,
+      "respuesta": [],
+      "coincide_estado": true,
+      "duracion_segundos": 0.004
+    },
+    {
+      "caso": "parametro_invalido",
+      "fecha": "2026-11-16T21:37:15.909292+00:00",
+      "url": "http://localhost:18080/api/v1/antecedentes?termino=ab",
+      "http_esperado": 400,
+      "http_obtenido": 400,
+      "respuesta": {
+        "fecha": "2026-11-16T16:37:15.935186988",
+        "estado": 400,
+        "fuente": "API",
+        "mensaje": "buscar.termino: size must be between 3 and 60"
+      },
+      "coincide_estado": true,
+      "duracion_segundos": 0.035
+    },
+    {
+      "caso": "bcrp_en_linea",
+      "fecha": "2026-11-16T21:37:15.944289+00:00",
+      "url": "http://localhost:18080/api/v1/ajustes?monto=551.89&origen=2024-07&destino=2026-06",
+      "http_esperado": 200,
+      "http_obtenido": 200,
+      "respuesta": {
+        "montoOriginal": 551.89,
+        "periodoOrigen": "2024-07",
+        "periodoDestino": "2026-06",
+        "factorIpc": 1.055212,
+        "factorTipoCambio": 0.904846,
+        "montoSegunIpc": 582.36,
+        "montoSegunTipoCambio": 499.38,
+        "minimo": 499.38,
+        "maximo": 582.36,
+        "diferencia": 82.98,
+        "diferenciaPorcentual": 16.6
+      },
+      "coincide_estado": true,
+      "duracion_segundos": 7.201
+    },
+    {
+      "caso": "oece_en_linea",
+      "fecha": "2026-11-16T21:37:23.145325+00:00",
+      "url": "http://localhost:18080/api/v1/antecedentes/ocds-dgv273-seacev3-1034013",
+      "http_esperado": 200,
+      "http_obtenido": 200,
+      "respuesta": {
+        "ocid": "ocds-dgv273-seacev3-1034013",
+        "nomenclatura": "COMPRE-SM-13-2024-MDA/OEC-1",
+        "descripcionProceso": "ADQUISICION DE TONER PARA IMPRESORA TK-3432 NEGRO",
+        "entidad": "MUNICIPALIDAD DISTRITAL DE ATE - VITARTE",
+        "metodo": "Comparación de Precios",
+        "fechaPublicacion": "2024-07-15",
+        "fechaAdjudicacion": "2024-07-15",
+        "valorEstimado": 75056.5,
+        "montoAdjudicado": 75056.5,
+        "proveedor": "KURMI COLOR SOCIEDAD ANONIMA CERRADA",
+        "numeroAdjudicaciones": 1,
+        "numeroDocumentos": 4,
+        "urlFuente": "https://contratacionesabiertas.oece.gob.pe/api/v1/record/ocds-dgv273-seacev3-1034013?format=json",
+        "items": [
+          {
+            "descripcion": "ADQUISICION DE TONER PARA IMPRESORA TK-3432 NEGRO",
+            "clasificacion": "FILTRO DE TONER PARA IMPRESORA MULTIFUNCIONAL LASER",
+            "cantidad": 136.0,
+            "unidad": "Unidad",
+            "valorTotal": 75056.5,
+            "estado": "CONTRATADO"
+          }
+        ],
+        "estado": "UTILIZABLE",
+        "motivos": [
+          "Un solo item homogeneo, con modelo identificado y adjudicacion registrada"
+        ],
+        "modelos": [
+          "TK3432"
+        ],
+        "cantidad": 136.0,
+        "precioUnitario": 551.89,
+        "ajuste": {
+          "montoOriginal": 551.89,
+          "periodoOrigen": "2024-07",
+          "periodoDestino": "2026-10",
+          "factorIpc": 1.066234,
+          "factorTipoCambio": 0.914434,
+          "montoSegunIpc": 588.44,
+          "montoSegunTipoCambio": 504.67,
+          "minimo": 504.67,
+          "maximo": 588.44,
+          "diferencia": 83.77,
+          "diferenciaPorcentual": 16.6
+        }
+      },
+      "coincide_estado": true,
+      "duracion_segundos": 11.182
+    }
+  ]
+}

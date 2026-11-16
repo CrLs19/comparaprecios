@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="pe.edu.utp.comparaprecios.IntegracionApiTest" time="16.136" tests="17" errors="0" skipped="0" failures="0">
+  <testcase name="detalleIndividualUsaElContratoJson" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="10.959">
+    <system-out>16:36:08.155 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [pe.edu.utp.comparaprecios.IntegracionApiTest]: IntegracionApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+16:36:08.242 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration pe.edu.utp.comparaprecios.ComparaPreciosApplication for test class pe.edu.utp.comparaprecios.IntegracionApiTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2026-11-16T16:36:08.552-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : Starting IntegracionApiTest using Java 17.0.13 with PID 57 (started by agent in /workspace/scratch/bea0a2b07e93/work/github_pruebas/comparaprecios)
+2026-11-16T16:36:08.554-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : No active profile set, falling back to 1 default profile: "default"
+2026-11-16T16:36:09.108-05:00  INFO 57 --- [comparaprecios] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-16T16:36:09.156-05:00  INFO 57 --- [comparaprecios] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 1 JPA repository interface.
+2026-11-16T16:36:09.571-05:00  INFO 57 --- [comparaprecios] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-16T16:36:09.633-05:00  INFO 57 --- [comparaprecios] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-11-16T16:36:09.696-05:00  INFO 57 --- [comparaprecios] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-16T16:36:09.935-05:00  INFO 57 --- [comparaprecios] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-16T16:36:09.967-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-16T16:36:10.218-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:pruebas user=SA
+2026-11-16T16:36:10.220-05:00  INFO 57 --- [comparaprecios] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-16T16:36:11.117-05:00  INFO 57 --- [comparaprecios] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-16T16:36:11.159-05:00  INFO 57 --- [comparaprecios] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-16T16:36:11.595-05:00  INFO 57 --- [comparaprecios] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-11-16T16:36:11.768-05:00  INFO 57 --- [comparaprecios] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-16T16:36:11.768-05:00  INFO 57 --- [comparaprecios] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-16T16:36:11.769-05:00  INFO 57 --- [comparaprecios] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-11-16T16:36:11.780-05:00  INFO 57 --- [comparaprecios] [           main] p.e.u.comparaprecios.IntegracionApiTest  : Started IntegracionApiTest in 3.44 seconds (process running for 8.57)
+</system-out>
+  </testcase>
+  <testcase name="filtroModeloSeNormalizaAntesDeAjustar" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.073" />
+  <testcase name="caidaBcrpConservaPrecioOriginalYDevuelveAdvertencia" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.706">
+    <system-out>2026-11-16T16:36:22.852-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.integracion.ClienteHttp          : BCRP: intento 1 fallido para https://bcrp.test/api/PN38705PM-PN01207PM/json/2024-7/2026-11/esp - 500 Internal Server Error: [no body]
+</system-out>
+  </testcase>
+  <testcase name="unDetalleFallidoProduceResultadoParcialConAdvertencia" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.016">
+    <system-out>2026-11-16T16:36:23.541-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.negocio.OrquestadorConsulta      : No se pudo leer un registro de la OECE: pe.edu.utp.comparaprecios.integracion.ServicioExternoException: Peticion rechazada (404 NOT_FOUND)
+</system-out>
+  </testcase>
+  <testcase name="busquedaCompletaClasificaAjustaYGuardaTrazabilidad" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.054" />
+  <testcase name="ajusteDirectoRespetaLosPeriodosSolicitados" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.017" />
+  <testcase name="caidaBusquedaOeceDevuelve503YNoRegistraExito" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.516">
+    <system-out>2026-11-16T16:36:23.627-05:00  WARN 57 --- [comparaprecios] [           main] p.e.u.c.integracion.ClienteHttp          : OECE: intento 1 fallido para https://oece.test/api/v1/search?search=TONER&amp;source=seace_v3&amp;format=json&amp;page=1 - 500 Internal Server Error: [no body]
+</system-out>
+  </testcase>
+  <testcase name="anioFueraDeRangoEvitaDetalleYBcrp" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.008" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[1]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.009" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[2]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.012" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[3]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.005" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[4]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.004" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[5]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.006" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[6]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.004" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[7]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.028" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[8]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.007" />
+  <testcase name="parametrosInvalidosDevuelven400SinConsultarFuentes(String)[9]" classname="pe.edu.utp.comparaprecios.IntegracionApiTest" time="0.005" />
+</testsuite>

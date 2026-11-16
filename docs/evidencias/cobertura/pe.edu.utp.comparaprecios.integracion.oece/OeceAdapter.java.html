@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OeceAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ComparaPrecios Peru</a> &gt; <a href="index.source.html" class="el_package">pe.edu.utp.comparaprecios.integracion.oece</a> &gt; <span class="el_source">OeceAdapter.java</span></div><h1>OeceAdapter.java</h1><pre class="source lang-java linenums">package pe.edu.utp.comparaprecios.integracion.oece;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
+import pe.edu.utp.comparaprecios.dominio.Antecedente;
+import pe.edu.utp.comparaprecios.dominio.ItemContratado;
+import pe.edu.utp.comparaprecios.integracion.ClienteHttp;
+import pe.edu.utp.comparaprecios.integracion.ServicioExternoException;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Adaptador del Portal de Contrataciones Abiertas (OCDS 1.1).
+ * Es el unico componente que conoce la estructura del JSON de la OECE;
+ * el resto de la aplicacion trabaja con la clase Antecedente.
+ */
+@Component
+public class OeceAdapter {
+
+    public static final String FUENTE = &quot;OECE&quot;;
+
+    private final ClienteHttp http;
+    private final String baseUrl;
+    private final String source;
+    private final int maxPaginas;
+
+    public OeceAdapter(ClienteHttp http,
+                       @Value(&quot;${oece.base-url}&quot;) String baseUrl,
+                       @Value(&quot;${oece.source}&quot;) String source,
+<span class="fc" id="L36">                       @Value(&quot;${oece.max-paginas}&quot;) int maxPaginas) {</span>
+<span class="fc" id="L37">        this.http = http;</span>
+<span class="fc" id="L38">        this.baseUrl = baseUrl;</span>
+<span class="fc" id="L39">        this.source = source;</span>
+<span class="fc" id="L40">        this.maxPaginas = maxPaginas;</span>
+<span class="fc" id="L41">    }</span>
+
+    /** Recorre las paginas de /api/v1/search y devuelve el ocid y la fecha de cada proceso. */
+    public List&lt;ResumenProceso&gt; buscar(String termino) {
+<span class="fc" id="L45">        List&lt;ResumenProceso&gt; resultado = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L46">        int pagina = 1;</span>
+<span class="fc" id="L47">        boolean haySiguiente = true;</span>
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        while (haySiguiente &amp;&amp; pagina &lt;= maxPaginas) {</span>
+<span class="fc" id="L49">            String url = UriComponentsBuilder.fromHttpUrl(baseUrl + &quot;/api/v1/search&quot;)</span>
+<span class="fc" id="L50">                    .queryParam(&quot;search&quot;, termino)</span>
+<span class="fc" id="L51">                    .queryParam(&quot;source&quot;, source)</span>
+<span class="fc" id="L52">                    .queryParam(&quot;format&quot;, &quot;json&quot;)</span>
+<span class="fc" id="L53">                    .queryParam(&quot;page&quot;, pagina)</span>
+<span class="fc" id="L54">                    .encode().toUriString();</span>
+<span class="fc" id="L55">            JsonNode raiz = http.getJson(FUENTE, url);</span>
+<span class="fc" id="L56">            JsonNode resultados = raiz.path(&quot;results&quot;);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            if (!resultados.isArray()) {</span>
+<span class="fc" id="L58">                throw new ServicioExternoException(FUENTE, &quot;La busqueda no devolvio el arreglo 'results'&quot;, null);</span>
+            }
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            for (JsonNode r : resultados) {</span>
+<span class="fc" id="L61">                JsonNode cr = r.path(&quot;compiledRelease&quot;);</span>
+<span class="fc" id="L62">                resultado.add(new ResumenProceso(cr.path(&quot;ocid&quot;).asText(), fechaPublicacion(cr.path(&quot;tender&quot;))));</span>
+<span class="fc" id="L63">            }</span>
+<span class="fc" id="L64">            haySiguiente = raiz.path(&quot;pagination&quot;).path(&quot;has_next&quot;).asBoolean(false);</span>
+<span class="fc" id="L65">            pagina++;</span>
+<span class="fc" id="L66">        }</span>
+<span class="fc" id="L67">        return resultado;</span>
+    }
+
+    /** Consulta /api/v1/record/{ocid} y lo convierte en un Antecedente. */
+    public Antecedente obtenerDetalle(String ocid) {
+<span class="fc" id="L72">        String url = baseUrl + &quot;/api/v1/record/&quot; + ocid + &quot;?format=json&quot;;</span>
+<span class="fc" id="L73">        JsonNode raiz = http.getJson(FUENTE, url);</span>
+<span class="fc" id="L74">        JsonNode cr = raiz.path(&quot;records&quot;).path(0).path(&quot;compiledRelease&quot;);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (cr.isMissingNode()) {</span>
+<span class="fc" id="L76">            throw new ServicioExternoException(FUENTE, &quot;El registro &quot; + ocid + &quot; no contiene compiledRelease&quot;, null);</span>
+        }
+<span class="fc" id="L78">        Antecedente a = mapear(cr);</span>
+<span class="fc" id="L79">        a.setUrlFuente(url);</span>
+<span class="fc" id="L80">        return a;</span>
+    }
+
+    /** Mapeo OCDS -&gt; Antecedente. Es publico y estatico para poder probarlo sin red. */
+    public static Antecedente mapear(JsonNode cr) {
+<span class="fc" id="L85">        Antecedente a = new Antecedente();</span>
+<span class="fc" id="L86">        JsonNode tender = cr.path(&quot;tender&quot;);</span>
+
+<span class="fc" id="L88">        a.setOcid(cr.path(&quot;ocid&quot;).asText());</span>
+<span class="fc" id="L89">        a.setEntidad(cr.path(&quot;buyer&quot;).path(&quot;name&quot;).asText(null));</span>
+<span class="fc" id="L90">        a.setNomenclatura(tender.path(&quot;title&quot;).asText(null));</span>
+<span class="fc" id="L91">        a.setDescripcionProceso(tender.path(&quot;description&quot;).asText(null));</span>
+<span class="fc" id="L92">        a.setMetodo(tender.path(&quot;procurementMethodDetails&quot;).asText(null));</span>
+<span class="fc" id="L93">        a.setFechaPublicacion(fechaPublicacion(tender));</span>
+<span class="fc" id="L94">        a.setValorEstimado(monto(tender.path(&quot;value&quot;)));</span>
+<span class="fc" id="L95">        a.setNumeroDocumentos(tender.path(&quot;documents&quot;).size());</span>
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for (JsonNode i : tender.path(&quot;items&quot;)) {</span>
+<span class="fc" id="L98">            a.getItems().add(new ItemContratado(</span>
+<span class="fc" id="L99">                    i.path(&quot;description&quot;).asText(null),</span>
+<span class="fc" id="L100">                    i.path(&quot;classification&quot;).path(&quot;description&quot;).asText(null),</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                    i.hasNonNull(&quot;quantity&quot;) ? i.path(&quot;quantity&quot;).decimalValue() : null,</span>
+<span class="fc" id="L102">                    i.path(&quot;unit&quot;).path(&quot;name&quot;).asText(null),</span>
+<span class="fc" id="L103">                    monto(i.path(&quot;totalValue&quot;)),</span>
+<span class="fc" id="L104">                    i.path(&quot;statusDetails&quot;).asText(null)));</span>
+<span class="fc" id="L105">        }</span>
+
+<span class="fc" id="L107">        JsonNode awards = cr.path(&quot;awards&quot;);</span>
+<span class="fc" id="L108">        a.setNumeroAdjudicaciones(awards.size());</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (awards.size() &gt; 0) {</span>
+<span class="fc" id="L110">            JsonNode award = awards.get(0);</span>
+<span class="fc" id="L111">            a.setMontoAdjudicado(monto(award.path(&quot;value&quot;)));</span>
+<span class="fc" id="L112">            a.setFechaAdjudicacion(fecha(award.path(&quot;date&quot;).asText(null)));</span>
+<span class="fc" id="L113">            List&lt;String&gt; proveedores = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L114">            award.path(&quot;suppliers&quot;).forEach(s -&gt; proveedores.add(s.path(&quot;name&quot;).asText()));</span>
+<span class="fc" id="L115">            a.setProveedor(String.join(&quot;; &quot;, proveedores));</span>
+        }
+<span class="fc" id="L117">        return a;</span>
+    }
+
+    private static LocalDate fechaPublicacion(JsonNode tender) {
+<span class="fc" id="L121">        LocalDate f = fecha(tender.path(&quot;datePublished&quot;).asText(null));</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        return f != null ? f : fecha(tender.path(&quot;tenderPeriod&quot;).path(&quot;startDate&quot;).asText(null));</span>
+    }
+
+    private static BigDecimal monto(JsonNode value) {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        return value.hasNonNull(&quot;amount&quot;) ? value.path(&quot;amount&quot;).decimalValue() : null;</span>
+    }
+
+    private static LocalDate fecha(String texto) {
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">        if (texto == null || texto.isBlank()) {</span>
+<span class="nc" id="L131">            return null;</span>
+        }
+<span class="fc" id="L133">        return OffsetDateTime.parse(texto).toLocalDate();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
