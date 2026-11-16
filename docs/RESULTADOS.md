@@ -75,6 +75,21 @@ https://github.com/CrLs19/comparaprecios/actions.
 La publicación inicial reúne el proyecto existente y las pruebas añadidas.
 No demuestra por sí sola aportes individuales de los cinco integrantes.
 
+### Primera ejecución comprobada en GitHub Actions
+
+- Ejecución: https://github.com/CrLs19/comparaprecios/actions/runs/43967277251
+- Commit: `db5fc55bb0b3da0cdb8ebfd2a017da9741fa2bd4`.
+- Fin de Maven: **16/11/2026, 17:10:11 (Lima)**.
+- Entorno: runner Ubuntu de GitHub con Temurin Java 17.
+- Resultado: **BUILD SUCCESS; 57 pruebas, 0 fallos, 0 errores, 0 omitidas**.
+- Reportes: artefacto `pruebas-db5fc55bb0b3da0cdb8ebfd2a017da9741fa2bd4`
+  disponible dentro de esa ejecución, con retención de 30 días.
+
+El manifiesto anterior describe la ejecución local original. Git normaliza los
+saltos de línea de `mvnw.cmd` y los restaura como CRLF al descargarlo, según
+`.gitattributes`; no se cambió la lógica del lanzador. Para cambios posteriores,
+consultar también la ejecución de Actions del nuevo commit.
+
 Para mostrar al docente: ejecutar `probar.cmd`, abrir el reporte JaCoCo y enseñar
 un caso de integración y su prueba. Una vez publicado, conservar el enlace de
 Actions y el commit de esa misma versión. Los pendientes técnicos están en `PRUEBAS.md`.
